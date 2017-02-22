@@ -1,0 +1,98 @@
+--- origsrc/nx-libs-3.5.0.32/nxcomp/Makefile.in	2015-07-03 21:54:34.000000000 -0500
++++ src/nx-libs-3.5.0.32/nxcomp/Makefile.in	2017-02-21 17:23:54.189460200 -0600
+@@ -105,7 +105,7 @@ LIBFLAGS   =
+ endif
+ LIBARCHIVE = lib$(LIBRARY).a
+ 
+-LIBCYGSHARED  = cyg$(LIBRARY).dll
++LIBCYGSHARED  = cyg$(LIBRARY)-$(LIBVERSION).dll
+ LIBCYGARCHIVE = lib$(LIBRARY).dll.a
+ 
+ all: depend @ALL@
+@@ -257,7 +257,7 @@ $(LIBARCHIVE):	 $(CXXOBJ) $(COBJ)
+ 		 ranlib $(LIBARCHIVE)
+ 
+ $(LIBCYGSHARED): $(LIBARCHIVE)
+-		 $(CC) -shared -o $(LIBCYGSHARED) \
++		 $(CXX) -shared -o $(LIBCYGSHARED) \
+ 		 -Wl,--out-implib=$(LIBCYGARCHIVE) \
+ 		 -Wl,--export-all-symbols \
+ 		 -Wl,--enable-auto-import \
+@@ -284,12 +284,11 @@ install:	install.bin install.lib install
+ install.bin:
+ 
+ install.lib: all
++	./mkinstalldirs $(DESTDIR)${bindir}
+ 	./mkinstalldirs $(DESTDIR)${libdir}
+ 	./mkinstalldirs $(DESTDIR)${includedir}/nx
+-	$(INSTALL_DATA) $(LIBFULL)              $(DESTDIR)${libdir}
+-	$(INSTALL_LINK) $(LIBLOAD)              $(DESTDIR)${libdir}
+-	$(INSTALL_LINK) $(LIBSHARED)            $(DESTDIR)${libdir}
+-	$(INSTALL_DATA) $(LIBARCHIVE)           $(DESTDIR)${libdir}
++	$(INSTALL_LINK) $(LIBCYGSHARED)            $(DESTDIR)${bindir}
++	$(INSTALL_DATA) $(LIBCYGARCHIVE)           $(DESTDIR)${libdir}
+ 	$(INSTALL_DATA) NX*.h                   $(DESTDIR)${includedir}/nx
+ 	$(INSTALL_DATA) MD5.h                   $(DESTDIR)${includedir}/nx
+ 	echo "Running ldconfig tool, this may take a while..." && ldconfig || true
+--- origsrc/nx-libs-3.5.0.32/nxcompext/Makefile.in	2015-07-03 21:54:34.000000000 -0500
++++ src/nx-libs-3.5.0.32/nxcompext/Makefile.in	2017-02-21 17:23:54.193460700 -0600
+@@ -96,7 +96,7 @@ LIBFLAGS   =
+ endif
+ LIBARCHIVE = lib$(LIBRARY).a
+ 
+-LIBCYGSHARED  = cyg$(LIBRARY).dll
++LIBCYGSHARED  = cyg$(LIBRARY)-$(LIBVERSION).dll
+ LIBCYGARCHIVE = lib$(LIBRARY).dll.a
+ 
+ all: depend @ALL@
+@@ -165,11 +165,11 @@ install:       install.bin install.lib i
+ install.bin:
+ 
+ install.lib: all
++	./mkinstalldirs $(DESTDIR)${bindir}
+ 	./mkinstalldirs $(DESTDIR)${libdir}
+ 	./mkinstalldirs $(DESTDIR)${includedir}/nx
+-	$(INSTALL_DATA) $(LIBFULL)              $(DESTDIR)${libdir}
+-	$(INSTALL_LINK) $(LIBLOAD)              $(DESTDIR)${libdir}
+-	$(INSTALL_LINK) $(LIBSHARED)            $(DESTDIR)${libdir}
++	$(INSTALL_LINK) $(LIBCYGSHARED)         $(DESTDIR)${bindir}
++	$(INSTALL_LINK) $(LIBCYGARCHIVE)        $(DESTDIR)${libdir}
+ 	$(INSTALL_DATA) NX*.h                   $(DESTDIR)${includedir}/nx
+ 	echo "Running ldconfig tool, this may take a while..." && ldconfig || true
+ 
+--- origsrc/nx-libs-3.5.0.32/nxcompshad/Makefile.in	2015-07-03 21:54:34.000000000 -0500
++++ src/nx-libs-3.5.0.32/nxcompshad/Makefile.in	2017-02-21 17:23:54.197459600 -0600
+@@ -141,7 +141,7 @@ ifeq ($(findstring -lgdi32,$(LIBS)),-lgd
+ # We need a smarter way to detect windows
+ # platform.
+ 
+-LIBDLL       = cyg$(LIBRARY).dll
++LIBDLL       = cyg$(LIBRARY)-$(LIBVERSION).dll
+ LIBDLLSTATIC = lib${LIBRARY}.dll.a
+ 
+ all: depend $(LIBARCHIVE) $(LIBDLL)
+@@ -171,7 +171,7 @@ $(LIBARCHIVE):	$(CXXOBJ) $(COBJ)
+ 		ranlib $(LIBARCHIVE)
+ 
+ $(LIBDLL): $(LIBARCHIVE)
+-		$(CC) -o $@ \
++		$(CXX) -o $@ \
+ 		-shared \
+ 		-Wl,--out-implib=$(LIBDLLSTATIC) \
+ 		-Wl,--export-all-symbols \
+@@ -199,12 +199,11 @@ install:       install.bin install.lib i
+ install.bin:
+ 
+ install.lib: all
++	$(INSTALL_DIR)                          $(DESTDIR)${bindir}
+ 	$(INSTALL_DIR)                          $(DESTDIR)${libdir}
+ 	$(INSTALL_DIR)                          $(DESTDIR)${includedir}/nx
+-	$(INSTALL_DATA) $(LIBFULL)              $(DESTDIR)${libdir}
+-	$(INSTALL_LINK) $(LIBLOAD)              $(DESTDIR)${libdir}
+-	$(INSTALL_LINK) $(LIBSHARED)            $(DESTDIR)${libdir}
+-	$(INSTALL_DATA) $(LIBARCHIVE)           $(DESTDIR)${libdir}
++	$(INSTALL_LINK) $(LIBDLL)               $(DESTDIR)${bindir}
++	$(INSTALL_DATA) $(LIBSTATIC)            $(DESTDIR)${libdir}
+ 	$(INSTALL_DATA) *.h                     $(DESTDIR)${includedir}/nx
+ 	echo "Running ldconfig tool, this may take a while..." && ldconfig || true
+ 

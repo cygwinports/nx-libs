@@ -1,0 +1,60 @@
+NAME="nx-libs"
+VERSION=3.5.0.32
+RELEASE=1
+CATEGORY="Libs"
+SUMMARY="NX X11 protocol compression libraries"
+DESCRIPTION="NX is a software suite which implements very efficient compression
+of the X11 protocol. This increases performance when using X applications over
+a network, especially a slow one."
+HOMEPAGE="http://x2go.org/"
+SRC_URI="http://code.x2go.org/releases/source/nx-libs/nx-libs-${VERSION}-full.tar.gz"
+PATCH_URI="
+	3.5-cygwin-dll.patch
+	3.5-cygwin-imake.patch
+	3.5-cygwin-xserver.patch
+	3.5-prefix.patch
+"
+
+PKG_NAMES="nxproxy libXcomp3 libXcomp-devel"
+nxproxy_CATEGORY="X11"
+nxproxy_SUMMARY="NX proxy"
+nxproxy_CONTENTS="
+	usr/bin/nxproxy
+	usr/lib/nx/bin/nxproxy.exe
+	usr/share/doc/nx-libs/
+	usr/share/man/man1/nxproxy.1*
+"
+libXcomp3_SUMMARY="NX differential compression library"
+libXcomp3_CONTENTS="
+	usr/bin/cygXcomp-3.dll
+"
+libXcomp_devel_SUMMARY=${libXcomp3_SUMMARY}
+libXcomp_devel_REQUIRES="xproto"
+libXcomp_devel_CONTENTS="
+	usr/include/nx/MD5.h
+	usr/include/nx/NX.h
+	usr/include/nx/NXalert.h
+	usr/include/nx/NXmitshm.h
+	usr/include/nx/NXpack.h
+	usr/include/nx/NXproto.h
+	usr/include/nx/NXrender.h
+	usr/include/nx/NXvars.h
+	usr/lib/libXcomp.dll.a
+"
+
+CYGPORT_USE_UNSTABLE_API=1
+src_unpack_hook() {
+	grep -rl __CYGWIN32__ | xargs sed -i -e 's/__CYGWIN32__/__CYGWIN__/g'
+	cp /usr/lib/X11/config/cygwin.* nx-X11/config/cf/
+}
+
+src_compile() {
+	lndirs
+	cd ${B}
+	cygmake build-lite PREFIX=/usr
+}
+
+src_install() {
+	cd ${B}
+	cygmake install-lite DESTDIR=${D} PREFIX=/usr
+}

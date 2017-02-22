@@ -1,0 +1,24 @@
+--- origsrc/nx-libs-3.5.0.32/nx-X11/lib/Imakefile	2015-07-03 21:54:34.000000000 -0500
++++ src/nx-libs-3.5.0.32/nx-X11/lib/Imakefile	2017-02-21 18:13:50.971695300 -0600
+@@ -158,10 +158,6 @@ XTRAPLIBDIR = XTrap
+ APPLELIBDIR = apple
+ #endif
+ 
+-#if BuildWindowsWMLibrary
+-WINDOWSLIBDIR = windows
+-#endif
+-
+ XF86EXTLIBS = $(XF86MISCLIBDIR) $(XF86VMLIBDIR) \
+ 		$(XF86DGALIBDIR) $(XF86RUSHLIBDIR)
+ 
+--- origsrc/nx-libs-3.5.0.32/nx-X11/programs/Xserver/GL/Imakefile	2015-07-03 21:47:33.000000000 -0500
++++ src/nx-libs-3.5.0.32/nx-X11/programs/Xserver/GL/Imakefile	2017-02-21 18:15:18.098941200 -0600
+@@ -9,8 +9,6 @@ XCOMM $XFree86: xc/programs/Xserver/GL/I
+  CORE_SUBDIR = /* opengl */
+ #elif defined(DarwinArchitecture) && DarwinQuartzSupport
+  CORE_SUBDIR = apple mesa
+-#elif defined(cygwinArchitecture) && GlxUseWindows
+- CORE_SUBDIR = windows mesa
+ #elif defined(Win32Architecture) && GlxUseWindows
+  CORE_SUBDIR = windows
+ #else
